@@ -9,15 +9,13 @@ env:
   AZURE_RESOURCE_GROUP: cd-with-actions
   AZURE_APP_PLAN: actions-ttt-deployment
   AZURE_LOCATION: '"East US"'
-  ###############################################
-  ### Replace <username> with GitHub username ###
-  ###############################################
   AZURE_WEBAPP_NAME: margobilyk-ttt-app
 
 jobs:
   setup-up-azure-resources:
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'spin up environment')
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +38,7 @@ jobs:
       - name: Create webapp resource
         if: success()
         run: |
-          az webapp create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --plan ${{ env.AZURE_APP_PLAN }} --name ${{ env.AZURE_WEBAPP_NAME }}  --deployment-container-image-name nginx --subscription ${{secrets.AZURE_SUBSCRIPTION_ID}}
+          az webapp create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --plan ${{ env.AZURE_APP_PLAN }} --name ${{ env.AZURE_WEBAPP_NAME }} --deployment-container-image-name nginx --subscription ${{secrets.AZURE_SUBSCRIPTION_ID}}
 
       - name: Configure webapp to use GHCR
         if: success()
@@ -49,7 +47,6 @@ jobs:
 
   destroy-azure-resources:
     runs-on: ubuntu-latest
-
     if: contains(github.event.pull_request.labels.*.name, 'destroy environment')
 
     steps:
